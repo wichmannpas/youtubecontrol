@@ -1,4 +1,6 @@
 #!/usr/bin/env python2
+from datetime import datetime, timedelta
+
 import dbus
 import dbus.glib
 import dbus.service
@@ -30,9 +32,15 @@ class MediaPlayer2(dbus.service.Object):
 
     @dbus.service.method('org.mpris.MediaPlayer2.Player')
     def Previous(self):
-        global chrome
+        global chrome, last_previous
         print('Received previous signal')
-        chrome.back()
+        now = datetime.now()
+        if now - last_previous < timedelta(seconds=5):
+            chrome.back()
+        else:
+            elem = chrome.find_element_by_tag_name('video')
+            elem.send_keys('0')
+        last_previous = now
 
     @dbus.service.method('org.mpris.MediaPlayer2.Player')
     def PlayPause(self):
@@ -48,6 +56,7 @@ class MediaPlayer2(dbus.service.Object):
         chrome.forward()
 
 chrome = None
+last_previous = datetime.now()
 
 
 if __name__ == '__main__':
