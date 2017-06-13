@@ -1,0 +1,3 @@
+dbus
+gobject
+selenium

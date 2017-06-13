@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import dbus
 import dbus.glib
 import dbus.service
-from selenium import webdriver
 import gobject
+from selenium import webdriver
 
 
 def main():
