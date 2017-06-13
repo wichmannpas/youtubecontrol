@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+from collections import Counter
 from datetime import datetime, timedelta
 
 import dbus
@@ -53,7 +54,29 @@ class MediaPlayer2(dbus.service.Object):
     def Next(self):
         global chrome
         print('Received next signal')
-        chrome.forward()
+        next_video_url = _find_next_video_url(chrome)
+        if next_video_url:
+            chrome.get(next_video_url)
+        else:
+            chrome.forward()
+
+
+def _find_next_video_url(c):
+    """Try different ways to determine the url of the next video."""
+    try:
+        next_video_url = sorted(Counter(
+            a.get_property('href')
+            for a in c.find_elements_by_tag_name('a')
+            if a.get_property('href').find('/watch?') >= 0
+        ).items(), key=lambda k: k[1], reverse=True)[0][0]
+    except Exception:
+        pass
+    if next_video_url:
+        return next_video_url
+    next_video_url = chrome.find_element_by_class_name('watch-sidebar-body') \
+        .find_element_by_tag_name('a').get_property('href')
+    if next_video_url:
+        return next_video_url
 
 chrome = None
 last_previous = datetime.now()
