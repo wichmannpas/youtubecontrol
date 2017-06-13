@@ -25,3 +25,14 @@ As well as the selenium chrome webdriver:
     curl https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip > $HOME/.local/bin
 
 Assuming that $HOME/.local/bin is in your PATH.
+
+
+How does that work?
+-------------------
+
+This script launches a chrome instance using Selenium. That enables the script to control the website in it.
+
+The play/pause-command send a space key to the <video> element in the youtube tab.
+Previous goes one step back in the browsers history.
+Next looks for all linked urls containig '/?watch' and uses the one appearing most often; this is the 'Up next' video in two of the current YouTube appearances. On other pages (i.e. search) it should at least open a somewhat related video.
+If this does not find a valid url (which should actually not happen), the browser history is used to go one page forward.
