@@ -1,6 +1,9 @@
 #!/usr/bin/env python2
 from collections import Counter
 from datetime import datetime, timedelta
+import atexit
+import signal
+import sys
 
 import dbus
 import dbus.glib
@@ -24,6 +27,13 @@ def main():
     chrome.get('https://youtube.com')
 
     loop.run()
+
+
+def quit(*args, **kwargs):
+    chrome.quit()
+    sys.exit(0)
+atexit.register(quit)
+signal.signal(signal.SIGTERM, quit)
 
 
 class MediaPlayer2(dbus.service.Object):
