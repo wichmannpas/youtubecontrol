@@ -14,7 +14,7 @@ from selenium import webdriver
 
 def main():
     """Open youtube and start dbus listener."""
-    global chrome
+    global browser
 
     loop = gobject.MainLoop()
 
@@ -23,14 +23,14 @@ def main():
 
     MediaPlayer2(bus_name, '/org/mpris/MediaPlayer2', loop)
 
-    chrome = webdriver.Firefox()
-    chrome.get('https://youtube.com')
+    browser = webdriver.Firefox()
+    browser.get('https://youtube.com')
 
     loop.run()
 
 
 def quit(*args, **kwargs):
-    chrome.quit()
+    browser.quit()
     sys.exit(0)
 atexit.register(quit)
 signal.signal(signal.SIGTERM, quit)
@@ -43,32 +43,32 @@ class MediaPlayer2(dbus.service.Object):
 
     @dbus.service.method('org.mpris.MediaPlayer2.Player')
     def Previous(self):
-        global chrome, last_previous
+        global browser, last_previous
         print('Received previous signal')
         now = datetime.now()
         if now - last_previous < timedelta(seconds=5):
-            chrome.back()
+            browser.back()
         else:
-            elem = chrome.find_element_by_tag_name('video')
+            elem = browser.find_element_by_tag_name('video')
             elem.send_keys('0')
         last_previous = now
 
     @dbus.service.method('org.mpris.MediaPlayer2.Player')
     def PlayPause(self):
-        global chrome
+        global browser
         print('Received PlayPause signal')
-        elem = chrome.find_element_by_tag_name('video')
+        elem = browser.find_element_by_tag_name('video')
         elem.send_keys(' ')
 
     @dbus.service.method('org.mpris.MediaPlayer2.Player')
     def Next(self):
-        global chrome
+        global browser
         print('Received next signal')
-        next_video_url = _find_next_video_url(chrome)
+        next_video_url = _find_next_video_url(browser)
         if next_video_url:
-            chrome.get(next_video_url)
+            browser.get(next_video_url)
         else:
-            chrome.forward()
+            browser.forward()
 
 
 def _find_next_video_url(c):
@@ -83,12 +83,12 @@ def _find_next_video_url(c):
         pass
     if next_video_url:
         return next_video_url
-    next_video_url = chrome.find_element_by_class_name('watch-sidebar-body') \
+    next_video_url = browser.find_element_by_class_name('watch-sidebar-body') \
         .find_element_by_tag_name('a').get_property('href')
     if next_video_url:
         return next_video_url
 
-chrome = None
+browser = None
 last_previous = datetime.now()
 
 
