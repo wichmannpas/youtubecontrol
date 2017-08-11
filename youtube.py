@@ -57,8 +57,8 @@ class MediaPlayer2(dbus.service.Object):
     def PlayPause(self):
         global browser
         print('Received PlayPause signal')
-        elem = browser.find_element_by_tag_name('video')
-        elem.send_keys(' ')
+        elem = browser.find_element_by_class_name('ytp-play-button')
+        elem.click()
 
     @dbus.service.method('org.mpris.MediaPlayer2.Player')
     def Next(self):
