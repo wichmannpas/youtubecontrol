@@ -23,7 +23,7 @@ def main():
 
     MediaPlayer2(bus_name, '/org/mpris/MediaPlayer2', loop)
 
-    chrome = webdriver.Chrome()
+    chrome = webdriver.Firefox()
     chrome.get('https://youtube.com')
 
     loop.run()
